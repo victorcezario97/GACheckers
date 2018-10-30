@@ -1,8 +1,13 @@
+package game;
 import java.awt.*;
 import java.awt.event.*;
 
+import players.GAPlayer;
+import players.MMPlayer;
+
 @SuppressWarnings("serial")
-class CheckersCanvas extends Canvas implements ActionListener, MouseListener {
+
+public class CheckersCanvas extends Canvas implements ActionListener, MouseListener {
 
      // This canvas displays a 160-by-160 checkerboard pattern with
      // a 2-pixel black border.  It is assumed that the size of the
@@ -33,7 +38,8 @@ class CheckersCanvas extends Canvas implements ActionListener, MouseListener {
    CheckersMove[] legalMoves;  // An array containing the legal moves for the
                                //   current player.
    
-   GAPlayer gap;	//Genetic algorithm player.
+   //GAPlayer gap;	//Genetic algorithm player.
+   MMPlayer mmp;	//Minimax algorithm player.
    
 
    public CheckersCanvas() {
@@ -50,7 +56,8 @@ class CheckersCanvas extends Canvas implements ActionListener, MouseListener {
       message = new Label("",Label.CENTER);
       board = new CheckersData();
       
-      gap = new GAPlayer();
+      //gap = new GAPlayer();
+      mmp = new MMPlayer();
       
       doNewGame();
    }
@@ -159,7 +166,7 @@ class CheckersCanvas extends Canvas implements ActionListener, MouseListener {
    }  // end doClickSquare()
    
 
-   void doMakeMove(CheckersMove move) {
+   public void doMakeMove(CheckersMove move) {
           // This is called when the current player has chosen the specified
           // move.  Make the move, and then either end or continue the game
           // appropriately.
@@ -179,7 +186,8 @@ class CheckersCanvas extends Canvas implements ActionListener, MouseListener {
                message.setText("RED:  You must continue jumping.");
             else {
                message.setText("BLACK:  You must continue jumping.");
-               gap.play(legalMoves, this);
+               //gap.play(legalMoves, this);
+               mmp.play(legalMoves, this, board.getBoard());
             }
             selectedRow = move.toRow;  // Since only one piece can be moved, select it.
             selectedCol = move.toCol;
@@ -203,7 +211,8 @@ class CheckersCanvas extends Canvas implements ActionListener, MouseListener {
          else
             message.setText("BLACK:  Make your move.");
          
-         gap.play(legalMoves, this);
+         //gap.play(legalMoves, this)
+         mmp.play(legalMoves, this, board.getBoard());
       }
       else {
          currentPlayer = CheckersData.RED;

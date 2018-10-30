@@ -1,6 +1,7 @@
+package game;
 import java.util.Vector;
 
-class CheckersData {
+public class CheckersData {
 
       // An object of this class holds data about a game of checkers.
       // It knows what kind of piece is on each sqaure of the checkerboard.
@@ -22,6 +23,44 @@ class CheckersData {
 
    private int[][] board;  // board[r][c] is the contents of row r, column c.  
    
+   
+   public void setBoard(int[][] board) {
+	   for(int i=0; i<8; i++) {
+		   for(int j=0; j<8; j++) {
+			   this.board[i][j] = board[i][j];
+		   }
+	   }
+   }
+   
+   public int[][] getBoard(){
+	   return board;
+   }
+   
+   public int boardState(int player) {
+	   int state = 0;
+	   
+	   if(player == RED) {
+		   for(int i=0; i<8; i++) {
+			   for(int j=0; j<8; j++) {
+				   if(board[i][j] == RED) state++;
+				   if(board[i][j] == RED_KING) state += 2;
+				   if(board[i][j] == BLACK) state--;
+				   if(board[i][j] == BLACK_KING) state -= 2;
+			   }
+		   }
+	   }else {
+		   for(int i=0; i<8; i++) {
+			   for(int j=0; j<8; j++) {
+				   if(board[i][j] == RED) state--;
+				   if(board[i][j] == RED_KING) state -= 2;
+				   if(board[i][j] == BLACK) state++;
+				   if(board[i][j] == BLACK_KING) state += 2;
+			   }
+		   }
+	   }
+	   
+	   return state;
+   }
 
    public CheckersData() {
          // Constructor.  Create the board and set it up for a new game.

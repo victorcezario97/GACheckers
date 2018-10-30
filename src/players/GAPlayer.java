@@ -1,3 +1,6 @@
+package players;
+import game.CheckersCanvas;
+import game.CheckersMove;
 
 public class GAPlayer {
 	
