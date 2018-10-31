@@ -43,18 +43,18 @@ public class CheckersData {
 		   for(int i=0; i<8; i++) {
 			   for(int j=0; j<8; j++) {
 				   if(board[i][j] == RED) state++;
-				   if(board[i][j] == RED_KING) state += 2;
+				   if(board[i][j] == RED_KING) state += 5;
 				   if(board[i][j] == BLACK) state--;
-				   if(board[i][j] == BLACK_KING) state -= 2;
+				   if(board[i][j] == BLACK_KING) state -= 5;
 			   }
 		   }
 	   }else {
 		   for(int i=0; i<8; i++) {
 			   for(int j=0; j<8; j++) {
 				   if(board[i][j] == RED) state--;
-				   if(board[i][j] == RED_KING) state -= 2;
+				   if(board[i][j] == RED_KING) state -= 5;
 				   if(board[i][j] == BLACK) state++;
-				   if(board[i][j] == BLACK_KING) state += 2;
+				   if(board[i][j] == BLACK_KING) state += 5;
 			   }
 		   }
 	   }
