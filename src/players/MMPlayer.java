@@ -14,8 +14,15 @@ public class MMPlayer {
 		canvas.doMakeMove(moves[p.first]);
 	}
 	
+	//Finds the best play checking 3 levels of the plays tree
 	private Pair findPlay(CheckersMove[] moves, int[][] board, int player, int it) {
-		if(moves == null) return null;
+		//If there are no moves, the game is over
+		if(moves == null) {
+			//If the game is over for the BLACK player, the AI has lost, so it receives a very low score
+			if(player == CheckersData.BLACK) return new Pair(0, -100);
+			//If the game is over for the RED player, the AI has won, so it receives a very high score
+			else return new Pair(0, 100);
+		}
 
 		Pair p = null;
 		Pair aux;
@@ -30,11 +37,14 @@ public class MMPlayer {
 		
 		for(CheckersMove move : moves) {			
 			
+			//Create a new board to simulate the moves
 			data = new CheckersData();
 			data.setBoard(board);
 			
+			//Execute the specified move
 			executeMove(data, move, player);
 						
+			//If it's the third iteration, the recursion stops
 			if(it == 2) {
 				aux = new Pair(count++, data.boardState(CheckersData.BLACK));
 			}else {
@@ -42,15 +52,17 @@ public class MMPlayer {
 				if(aux != null) aux.first = countAux++;
 			}
 			
-			if(aux == null) {
+			/*if(aux == null) {
 				System.out.println("NULL");
 				continue;
-			}
+			}*/
+			//If it's the AI's turn, it looks for the best play
 			if(player == CheckersData.BLACK) {
 				if(aux.second > p.second) {
 					p.first = aux.first;
 					p.second = aux.second;
 				}
+			//If it's the opponent's turn, the AI expects it to make the best possible move for them 
 			}else {
 				if(aux.second < p.second) {
 					p.first = aux.first;
