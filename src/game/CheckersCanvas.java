@@ -2,7 +2,7 @@ package game;
 import java.awt.*;
 import java.awt.event.*;
 
-import players.GAPlayer;
+//import players.GAPlayer;
 import players.MMPlayer;
 
 @SuppressWarnings("serial")
@@ -187,7 +187,6 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
       
       if(move.fromRow < move.toRow) {
 	      for(aniY = 4 + move.fromRow*20; aniY< 4 + move.toRow*20; aniY++) {
-	    	  System.out.println(aniY);
 	    	  paint(this.getGraphics());
 	    	  if(move.fromCol < move.toCol) aniX++;
 	    	  else aniX--;
@@ -201,7 +200,6 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 	      }
       }else {
     	  for(aniY = 4 + move.fromRow*20; aniY > 4 + move.toRow*20; aniY--) {
-	    	  System.out.println(aniY);
 	    	  paint(this.getGraphics());
 	    	  if(move.fromCol < move.toCol) aniX++;
 	    	  else aniX--;
@@ -323,11 +321,9 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
              else
                 g.setColor(Color.gray);
              g.fillRect(2 + col*20, 2 + row*20, 20, 20);
-             System.out.println(aniMove);
+
              if(aniMove != null) {
-            	 System.out.println("WAW");
 	             if((row == aniMove.fromRow && col == aniMove.fromCol) || (row == aniMove.toRow && col == aniMove.toCol)) {
-	            	 System.out.println("ANIMATING");
 	            	 if(board.pieceAt(aniMove.toRow, aniMove.toCol) == CheckersData.RED) g.setColor(Color.red);
 	                 else g.setColor(Color.black);
 	            	 

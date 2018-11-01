@@ -19,9 +19,9 @@ public class MMPlayer {
 		//If there are no moves, the game is over
 		if(moves == null) {
 			//If the game is over for the BLACK player, the AI has lost, so it receives a very low score
-			if(player == CheckersData.BLACK) return new Pair(0, -100);
+			if(player == CheckersData.BLACK) return new Pair(0, -49);
 			//If the game is over for the RED player, the AI has won, so it receives a very high score
-			else return new Pair(0, 100);
+			else return new Pair(0, 49);
 		}
 
 		Pair p = null;
