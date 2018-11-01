@@ -41,11 +41,16 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
    //GAPlayer gap;	//Genetic algorithm player.
    MMPlayer mmp;	//Minimax algorithm player.
    
+   int aniX, aniY;
+   CheckersMove aniMove;
+   
 
    public CheckersCanvas() {
           // Constructor.  Create the buttons and lable.  Listen for mouse
           // clicks and for clicks on the buttons.  Create the board and
           // start the first game.
+	  aniX = -1; aniY = -1;
+	  aniMove = null;
       setBackground(Color.black);
       addMouseListener(this);
       setFont(new  Font("Serif", Font.BOLD, 14));
@@ -170,8 +175,46 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
           // This is called when the current player has chosen the specified
           // move.  Make the move, and then either end or continue the game
           // appropriately.
+	   
+	  aniMove = move;
           
       board.makeMove(move);
+      
+      aniY = 4 + move.fromRow*20;
+      aniX = 4 + move.fromCol*20;
+      
+      boolean flag = true;
+      
+      if(move.fromRow < move.toRow) {
+	      for(aniY = 4 + move.fromRow*20; aniY< 4 + move.toRow*20; aniY++) {
+	    	  System.out.println(aniY);
+	    	  paint(this.getGraphics());
+	    	  if(move.fromCol < move.toCol) aniX++;
+	    	  else aniX--;
+	    	  
+	    	  if(flag) {
+	    		  aniY--;
+	    		  if(move.fromCol < move.toCol) aniX--;
+		    	  else aniX++;
+	    		  flag = !flag;
+	    	  }
+	      }
+      }else {
+    	  for(aniY = 4 + move.fromRow*20; aniY > 4 + move.toRow*20; aniY--) {
+	    	  System.out.println(aniY);
+	    	  paint(this.getGraphics());
+	    	  if(move.fromCol < move.toCol) aniX++;
+	    	  else aniX--;
+	    	  
+	    	  if(flag) {
+	    		  aniY++;
+	    		  if(move.fromCol < move.toCol) aniX--;
+		    	  else aniX++;
+	    		  flag = !flag;
+	    	  }
+	      }
+      }
+      aniMove = null;
       
       /* If the move was a jump, it's possible that the player has another
          jump.  Check for legal jumps starting from the square that the player
@@ -227,7 +270,6 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
       
       /* Set selectedRow = -1 to record that the player has not yet selected
           a piece to move. */
-      
       selectedRow = -1;
       
       /* As a courtesy to the user, if all legal moves use the same piece, then
@@ -281,6 +323,19 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
              else
                 g.setColor(Color.gray);
              g.fillRect(2 + col*20, 2 + row*20, 20, 20);
+             System.out.println(aniMove);
+             if(aniMove != null) {
+            	 System.out.println("WAW");
+	             if((row == aniMove.fromRow && col == aniMove.fromCol) || (row == aniMove.toRow && col == aniMove.toCol)) {
+	            	 System.out.println("ANIMATING");
+	            	 if(board.pieceAt(aniMove.toRow, aniMove.toCol) == CheckersData.RED) g.setColor(Color.red);
+	                 else g.setColor(Color.black);
+	            	 
+	            	 g.fillOval(aniX, aniY, 16, 16);
+	            	 continue;
+	             }
+             }
+            	 
              switch (board.pieceAt(row,col)) {
                 case CheckersData.RED:
                    g.setColor(Color.red);
@@ -305,6 +360,7 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
              }
          }
       }
+      
     
       /* If a game is in progress, highlight the legal moves.   Note that legalMoves
          is never null while a game is in progress. */      
