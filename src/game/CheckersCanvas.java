@@ -183,7 +183,9 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
       aniY = 4 + move.fromRow*20;
       aniX = 4 + move.fromCol*20;
       
-      boolean flag = true;
+      boolean flag1 = true;
+      boolean flag2 = true;
+      boolean flag3 = true;
       
       if(move.fromRow < move.toRow) {
 	      for(aniY = 4 + move.fromRow*20; aniY< 4 + move.toRow*20; aniY++) {
@@ -191,12 +193,16 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 	    	  if(move.fromCol < move.toCol) aniX++;
 	    	  else aniX--;
 	    	  
-	    	  if(flag) {
+	    	  if(flag1 && flag2 && flag3) {
 	    		  aniY--;
 	    		  if(move.fromCol < move.toCol) aniX--;
 		    	  else aniX++;
-	    		  flag = !flag;
-	    	  }
+	    		  flag1 = false;
+	    		  flag2 = false;
+	    		  flag3 = false;
+	    	  }else if(!flag1) flag1 = true;
+	    	  else if(!flag2) flag2 = true;
+	    	  else flag3 = true;
 	      }
       }else {
     	  for(aniY = 4 + move.fromRow*20; aniY > 4 + move.toRow*20; aniY--) {
@@ -204,12 +210,16 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 	    	  if(move.fromCol < move.toCol) aniX++;
 	    	  else aniX--;
 	    	  
-	    	  if(flag) {
+	    	  if(flag1 && flag2) {
 	    		  aniY++;
 	    		  if(move.fromCol < move.toCol) aniX--;
 		    	  else aniX++;
-	    		  flag = !flag;
-	    	  }
+	    		  flag1 = false;
+	    		  flag2 = false;
+	    		  flag3 = false;
+	    	  }else if(!flag1) flag1 = true;
+	    	  else if(!flag2) flag2 = true;
+	    	  else flag3 = true;
 	      }
       }
       aniMove = null;

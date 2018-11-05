@@ -42,24 +42,42 @@ public class CheckersData {
 	   if(player == RED) {
 		   for(int i=0; i<8; i++) {
 			   for(int j=0; j<8; j++) {
-				   if(board[i][j] == RED) state++;
-				   if(board[i][j] == RED_KING) state += 5;
-				   if(board[i][j] == BLACK) state--;
-				   if(board[i][j] == BLACK_KING) state -= 5;
+				   if(board[i][j] == RED) state += getPoints(i, j);
+				   if(board[i][j] == RED_KING) state += 5 + getPoints(i, j);
+				   if(board[i][j] == BLACK) state -= getPoints(i, j);
+				   if(board[i][j] == BLACK_KING) state -= 5 - getPoints(i, j);
 			   }
 		   }
 	   }else {
 		   for(int i=0; i<8; i++) {
 			   for(int j=0; j<8; j++) {
-				   if(board[i][j] == RED) state--;
-				   if(board[i][j] == RED_KING) state -= 5;
-				   if(board[i][j] == BLACK) state++;
-				   if(board[i][j] == BLACK_KING) state += 5;
+				   if(board[i][j] == RED) state -= getPoints(i, j);
+				   if(board[i][j] == RED_KING) state -= 5 - getPoints(i, j);
+				   if(board[i][j] == BLACK) state += getPoints(i, j);
+				   if(board[i][j] == BLACK_KING) state += 5 + getPoints(i, j);
 			   }
 		   }
 	   }
 	   
 	   return state;
+   }
+   
+   //Return points based on the position of the piece on the board
+   private int getPoints(int i, int j) {
+	   //Borders
+	   if(i == 0 || i == 7) return 4;
+	   if(j == 0 || j == 7) return 4;
+	   
+	   if(i == 1 || i == 6) return 3;
+	   if(j == 1 || j == 6) return 3;
+	   
+	   if(i == 2 || i == 5) return 2;
+	   if(j == 2 || j == 5) return 2;
+	   
+	   if(i == 3 || i == 4) return 1;
+	   if(j == 3 || j == 4) return 1;
+	   
+	   return 0;
    }
 
    public CheckersData() {
