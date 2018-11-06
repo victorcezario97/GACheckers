@@ -8,6 +8,7 @@ import utils.Pair;
 public class MMPlayer {
 	
 	public void play(CheckersMove[] moves, CheckersCanvas canvas, int[][] board){
+		
 		Pair p = findPlay(moves, board, CheckersData.BLACK, 0);
 		
 		if(moves == null) return;
@@ -46,7 +47,7 @@ public class MMPlayer {
 						
 			//If it's the third iteration, the recursion stops
 			if(it == 2) {
-				aux = new Pair(count++, data.boardState(CheckersData.BLACK));
+				aux = new Pair(count++, data.boardStateMM(CheckersData.BLACK));
 			}else {
 				aux = findPlay(data.getLegalMoves(newPlayer), data.getBoard(), newPlayer, it+1);
 				if(aux != null) aux.first = countAux++;

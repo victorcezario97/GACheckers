@@ -31,6 +31,9 @@ public class Checkers extends Applet{
 
     board.resignButton.setBackground(Color.lightGray);
     add(board.resignButton);
+    
+    board.check.setVisible(true);
+    add(board.check);
 
     board.message.setForeground(Color.green);
     board.message.setFont(new Font("Serif", Font.BOLD, 14));
@@ -43,5 +46,6 @@ public class Checkers extends Applet{
     board.newGameButton.setBounds(210, 60, 100, 30);
     board.resignButton.setBounds(210, 120, 100, 30);
     board.message.setBounds(0, 200, 330, 30);
+    board.check.setBounds(50, 220, 200, 30);
  }
 }

@@ -36,25 +36,25 @@ public class CheckersData {
 	   return board;
    }
    
-   public int boardState(int player) {
+   public int boardStateMM(int player) {
 	   int state = 0;
 	   
 	   if(player == RED) {
 		   for(int i=0; i<8; i++) {
 			   for(int j=0; j<8; j++) {
-				   if(board[i][j] == RED) state += getPoints(i, j);
-				   if(board[i][j] == RED_KING) state += 5 + getPoints(i, j);
-				   if(board[i][j] == BLACK) state -= getPoints(i, j);
-				   if(board[i][j] == BLACK_KING) state -= 5 - getPoints(i, j);
+				   if(board[i][j] == RED) state += getPointsMM(i, j);
+				   if(board[i][j] == RED_KING) state += 5 + getPointsMM(i, j);
+				   if(board[i][j] == BLACK) state -= getPointsMM(i, j);
+				   if(board[i][j] == BLACK_KING) state -= 5 - getPointsMM(i, j);
 			   }
 		   }
 	   }else {
 		   for(int i=0; i<8; i++) {
 			   for(int j=0; j<8; j++) {
-				   if(board[i][j] == RED) state -= getPoints(i, j);
-				   if(board[i][j] == RED_KING) state -= 5 - getPoints(i, j);
-				   if(board[i][j] == BLACK) state += getPoints(i, j);
-				   if(board[i][j] == BLACK_KING) state += 5 + getPoints(i, j);
+				   if(board[i][j] == RED) state -= getPointsMM(i, j);
+				   if(board[i][j] == RED_KING) state -= 5 - getPointsMM(i, j);
+				   if(board[i][j] == BLACK) state += getPointsMM(i, j);
+				   if(board[i][j] == BLACK_KING) state += 5 + getPointsMM(i, j);
 			   }
 		   }
 	   }
@@ -63,7 +63,7 @@ public class CheckersData {
    }
    
    //Return points based on the position of the piece on the board
-   private int getPoints(int i, int j) {
+   private int getPointsMM(int i, int j) {
 	   //Borders
 	   if(i == 0 || i == 7) return 4;
 	   if(j == 0 || j == 7) return 4;
@@ -76,6 +76,50 @@ public class CheckersData {
 	   
 	   if(i == 3 || i == 4) return 1;
 	   if(j == 3 || j == 4) return 1;
+	   
+	   return 0;
+   }
+   
+   public int boardStateGA(int player, float[] points) {
+	   int state = 0;
+	   
+	   if(player == RED) {
+		   for(int i=0; i<8; i++) {
+			   for(int j=0; j<8; j++) {
+				   if(board[i][j] == RED) state += getPointsGA(i, j, points);
+				   if(board[i][j] == RED_KING) state += points[4] + getPointsGA(i, j, points);
+				   if(board[i][j] == BLACK) state -= getPointsGA(i, j, points);
+				   if(board[i][j] == BLACK_KING) state -= points[4] - getPointsGA(i, j, points);
+			   }
+		   }
+	   }else {
+		   for(int i=0; i<8; i++) {
+			   for(int j=0; j<8; j++) {
+				   if(board[i][j] == RED) state -= getPointsGA(i, j, points);
+				   if(board[i][j] == RED_KING) state -= points[4] - getPointsGA(i, j, points);
+				   if(board[i][j] == BLACK) state += getPointsGA(i, j, points);
+				   if(board[i][j] == BLACK_KING) state += points[4] + getPointsGA(i, j, points);
+			   }
+		   }
+	   }
+	   
+	   return state;
+   }
+   
+   //Return points based on the position of the piece on the board
+   private float getPointsGA(int i, int j, float[] points) {
+	   //Borders
+	   if(i == 0 || i == 7) return points[0];
+	   if(j == 0 || j == 7) return points[0];
+	   
+	   if(i == 1 || i == 6) return points[1];
+	   if(j == 1 || j == 6) return points[1];
+	   
+	   if(i == 2 || i == 5) return points[2];
+	   if(j == 2 || j == 5) return points[2];
+	   
+	   if(i == 3 || i == 4) return points[3];
+	   if(j == 3 || j == 4) return points[3];
 	   
 	   return 0;
    }
