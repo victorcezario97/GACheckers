@@ -23,17 +23,21 @@ public class Checkers extends Applet{
 
     CheckersCanvas board = new CheckersCanvas();
         // Note: The constructor creates the buttons board.resignButton
-        // and board.newGameButton and the Label board.message.
+        // and board.startButton and the Label board.message.
     add(board);
 
-    board.newGameButton.setBackground(Color.lightGray);
-    add(board.newGameButton);
+    board.startButton.setBackground(Color.lightGray);
+    add(board.startButton);
 
     board.resignButton.setBackground(Color.lightGray);
     add(board.resignButton);
     
     board.check.setVisible(true);
     add(board.check);
+    add(board.checkAGAG);
+    add(board.checkAGH);
+    add(board.checkMMAG);
+    add(board.checkMMH);
 
     board.message.setForeground(Color.green);
     board.message.setFont(new Font("Serif", Font.BOLD, 14));
@@ -43,9 +47,13 @@ public class Checkers extends Applet{
        its setBounds() method. */
 
     board.setBounds(20,20,164,164); // Note:  size MUST be 164-by-164 !
-    board.newGameButton.setBounds(210, 60, 100, 30);
-    board.resignButton.setBounds(210, 120, 100, 30);
+    board.startButton.setBounds(210, 20, 100, 30);
+    board.resignButton.setBounds(210, 55, 100, 30);
     board.message.setBounds(0, 200, 330, 30);
     board.check.setBounds(50, 220, 200, 30);
+    board.checkAGAG.setBounds(210, 90, 130, 30);
+    board.checkAGH.setBounds(210, 120, 130, 30);
+    board.checkMMAG.setBounds(210, 150, 130, 30);
+    board.checkMMH.setBounds(210, 180, 130, 30);
  }
 }

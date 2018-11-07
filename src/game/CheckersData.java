@@ -45,14 +45,14 @@ public class CheckersData {
 				   if(board[i][j] == RED) state += getPointsMM(i, j);
 				   if(board[i][j] == RED_KING) state += 5 + getPointsMM(i, j);
 				   if(board[i][j] == BLACK) state -= getPointsMM(i, j);
-				   if(board[i][j] == BLACK_KING) state -= 5 - getPointsMM(i, j);
+				   if(board[i][j] == BLACK_KING) state += (-5) - getPointsMM(i, j);
 			   }
 		   }
 	   }else {
 		   for(int i=0; i<8; i++) {
 			   for(int j=0; j<8; j++) {
 				   if(board[i][j] == RED) state -= getPointsMM(i, j);
-				   if(board[i][j] == RED_KING) state -= 5 - getPointsMM(i, j);
+				   if(board[i][j] == RED_KING) state += (-5) - getPointsMM(i, j);
 				   if(board[i][j] == BLACK) state += getPointsMM(i, j);
 				   if(board[i][j] == BLACK_KING) state += 5 + getPointsMM(i, j);
 			   }
