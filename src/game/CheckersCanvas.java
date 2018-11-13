@@ -8,7 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.rmi.activation.ActivationGroupID;
 
 import players.GAPlayer;
 import players.MMPlayer;
@@ -34,7 +33,7 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 							// when the current game has ended.
 
 	CheckboxGroup cbg;
-	Checkbox checkMMH, checkMMAG, checkAGAG, checkAGH, check;
+	Checkbox checkMMH, checkMMAG, checkAGH, check;
 	
 
 	Label message; // A label for displaying messages to the user.
@@ -56,7 +55,7 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 	CheckersMove[] legalMoves; // An array containing the legal moves for the
 								// current player.
 
-	GAPlayer[] gapRed, gapBlack; // Genetic algorithm player.
+	GAPlayer[] gapBlack; // Genetic algorithm player.
 	MMPlayer mmp; // Minimax algorithm player.
 	int GAIndex = 0;
 
@@ -84,7 +83,6 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 		cbg = new CheckboxGroup();
 		checkMMH = new Checkbox("Minimax VS Human", true, cbg);
 		checkMMAG = new Checkbox("Minimax VS Genetic", false, cbg);
-		checkAGAG = new Checkbox("Genetic VS Genetic", false, cbg);
 		checkAGH = new Checkbox("Genetic VS Human", false, cbg);
 		check = new Checkbox("Use previous generation", false);
 		message = new Label("", Label.CENTER);
@@ -101,17 +99,34 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 	}
 	
 	private void startGame() {
-		if(checkAGAG.getState()) {
-			gapRed = Population.newPop();
-			gapBlack = Population.newPop();
-		}else if(checkAGH.getState()) {
+		if(checkAGH.getState()) {
 			gapBlack = Population.newPop();
 		}else if(checkMMAG.getState()) {
+			GAIndex = 0;
 			mmp = new MMPlayer();
 			gapBlack = Population.newPop();
+			gen = 0;
 		}else if(checkMMH.getState()) {
 			mmp = new MMPlayer();
 		}
+		
+		//Reading Gen files if checkbox is checked
+				if (check.getState()) {
+					if(checkAGH.getState() || checkMMAG.getState()) {
+						float[][] pBlack = readGenFile("geninfoBLACK.txt");
+						
+						if(pBlack == null) {
+							for(int i=0; i<Population.N; i++)
+								gapBlack[i] = Population.newGAPlayer();
+						}else {
+							for(int i=0; i<Population.N; i++) {
+								for(int j=0; j<5; j++) {
+									gapBlack[i].points[j] = pBlack[i][j];
+								}
+							}
+						}
+					}
+				}
 		
 		doNewGame();
 		makePlay(CheckersData.RED);
@@ -120,13 +135,11 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 	
 	private void makePlay(int player) {
 		if(player == CheckersData.RED) {
-			if(checkAGAG.getState()) {
-				gapRed[GAIndex].play(legalMoves, this, board.getBoard());
-			}else if(checkMMAG.getState() || checkMMH.getState()) {
+			if(checkMMAG.getState() || checkMMH.getState()) {
 				mmp.play(legalMoves, this, board.getBoard());
 			}
 		}else {
-			if(checkAGAG.getState() || checkMMAG.getState() || checkAGH.getState()) {
+			if(checkMMAG.getState() || checkAGH.getState()) {
 				gapBlack[GAIndex].play(legalMoves, this, board.getBoard());
 			}
 		}
@@ -145,50 +158,20 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 		legalMoves = board.getLegalMoves(CheckersData.RED); // Get RED's legal moves.
 		selectedRow = -1; // RED has not yet selected a piece to move.
 		// message.setText("Red: Make your move.");
-		//message.setText("PLAYER[" + GAIndex + "]. PREVIOUS FITNESS: " + gap[GAIndex].fitness);
+		if(checkMMAG.getState()) {
+			String s;
+			if(gapBlack[GAIndex].fitness > 400) s = "WIN";
+			else if(gapBlack[GAIndex].fitness > 150) s = "DRAW";
+			else if(gapBlack[GAIndex].fitness == 0) s = "NO GAME";
+			else s = "LOSS";
+			message.setText("PLAYER[" + GAIndex + "]. PREVIOUS RESULT: " + s);
+		}
 		gameInProgress = true;
 		//startButton.setEnabled(false);
 		resignButton.setEnabled(true);
 		turns = 0;
 		
-		//Reading Gen files if checkbox is checked
-		if (check.getState()) {
-			if(checkAGAG.getState()) {
-				float[][] pRed, pBlack;
-				
-				pRed = readGenFile("geninfoRED.txt");
-				pBlack = readGenFile("geninfoBLACK.txt");
-				
-				for(int i=0; i<Population.N; i++) {
-					for(int j=0; j<5; j++) {
-						if(pRed != null) gapRed[i].points[j] = pRed[i][j];
-						if(pBlack != null) gapBlack[i].points[j] = pBlack[i][j];
-					}
-				}
-				
-				if(pRed == null) {
-					for(int i=0; i<Population.N; i++)
-						gapRed[i] = Population.newGAPlayer();
-				}
-				if(pBlack == null) {
-					for(int i=0; i<Population.N; i++)
-						gapBlack[i] = Population.newGAPlayer();
-				}
-			}else if(checkAGH.getState() || checkMMAG.getState()) {
-				float[][] pBlack = readGenFile("geninfoBLACK.txt");
-				
-				if(pBlack == null) {
-					for(int i=0; i<Population.N; i++)
-						gapBlack[i] = Population.newGAPlayer();
-				}else {
-					for(int i=0; i<Population.N; i++) {
-						for(int j=0; j<5; j++) {
-							gapBlack[i].points[j] = pBlack[i][j];
-						}
-					}
-				}
-			}
-		}
+		
 
 		repaint();
 	}
@@ -263,19 +246,11 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 		gameInProgress = false;
 
 		//Scoring the fitness of the Genetic algorithms
-		if(checkAGAG.getState()) {
-			if (winner == CheckersData.RED)
-				gapRed[GAIndex].fitness = 500 - turns;
-			else if (winner == CheckersData.EMPTY)
-				gapRed[GAIndex].fitness = board.boardStateMM(CheckersData.RED) + 200;
-			else
-				gapRed[GAIndex].fitness = turns;
-		}
-		if(checkMMAG.getState() || checkAGAG.getState()) {
+				if(checkMMAG.getState()) {
 			if (winner == CheckersData.BLACK)
 				gapBlack[GAIndex].fitness = 500 - turns;
 			else if (winner == CheckersData.EMPTY)
-				gapBlack[GAIndex].fitness = board.boardStateMM(CheckersData.BLACK) + 200;
+				gapBlack[GAIndex].fitness = board.boardStateMM(CheckersData.BLACK)/20 + 200;
 			else
 				gapBlack[GAIndex].fitness = turns;
 		}
@@ -294,7 +269,7 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 			
 		} else {
 			
-			if(checkAGAG.getState() || checkMMAG.getState()) {
+			if(checkMMAG.getState()) {
 				Pair best = new Pair(0, gapBlack[0].fitness);
 				Pair worst[] = new Pair[2];
 	
@@ -350,60 +325,7 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 				}
 			}
 			
-			if(checkAGAG.getState()) {
-				Pair best = new Pair(0, gapRed[0].fitness);
-				Pair worst[] = new Pair[2];
-	
-				if (gapRed[0].fitness < gapRed[1].fitness) {
-					worst[0] = new Pair(0, gapRed[0].fitness);
-					worst[1] = new Pair(1, gapRed[1].fitness);
-				} else {
-					worst[1] = new Pair(0, gapRed[0].fitness);
-					worst[0] = new Pair(1, gapRed[1].fitness);
-				}
-	
-				for (int i = 1; i < 10; i++) {
-					if (best.second < gapRed[i].fitness) {
-						best.first = i;
-						best.second = gapRed[i].fitness;
-					}
-	
-					if (worst[1].second > gapRed[i].fitness) {
-						if (worst[0].second > gapRed[i].fitness) {
-							worst[0].first = i;
-							worst[0].second = gapRed[i].fitness;
-						} else {
-							worst[1].first = i;
-							worst[1].second = gapRed[i].fitness;
-						}
-					}
-	
-				}
-	
-				gapRed = Population.crossOver(gapRed, best.first);
-				
-				gapRed[worst[0].first] = Population.newGAPlayer();
-				gapRed[worst[1].first] = Population.newGAPlayer();
-				gen++;
-	
-				System.out.println("GENERATION " + gen + ": ");
-				System.out.println("BEST: " + best.first);
-				System.out.printf("WORST WERE: %d [%d] - %d [%d]\n", worst[0].first, worst[0].second, worst[1].first,
-						worst[1].second);
-				Population.printPop(gapRed);
-	
-				GAIndex = 0;
-	
-				if (gen < 5)
-					doNewGame();
-				else
-					try {
-						writeGenInfo(CheckersData.RED);
-					} catch (IOException e) {
-						// TODO: handle exception
-					}
-			}
-
+			
 		}
 
 	}
@@ -423,9 +345,8 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 
 			for (int i = 0; i < 10; i++) {
 				for (int j = 0; j < 5; j++) {
-					if(player == CheckersData.RED)
-						sb.append(String.valueOf(gapRed[i].points[j]));
-					else sb.append(String.valueOf(gapBlack[i].points[j]));
+					if(player == CheckersData.BLACK)
+						sb.append(String.valueOf(gapBlack[i].points[j]));
 					sb.append(" ");
 				}
 				sb.append("\n");
@@ -518,7 +439,6 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 
 		boolean flag1 = true;
 		boolean flag2 = true;
-		boolean flag3 = true;
 
 		if (move.fromRow < move.toRow) {
 			for (aniY = 4 + move.fromRow * 20; aniY < 4 + move.toRow * 20; aniY++) {
@@ -528,7 +448,7 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 				else
 					aniX--;
 
-				if (flag1 && flag2 && flag3) {
+				if (flag1 && flag2) {
 					aniY--;
 					if (move.fromCol < move.toCol)
 						aniX--;
@@ -536,13 +456,10 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 						aniX++;
 					flag1 = false;
 					flag2 = false;
-					flag3 = false;
 				} else if (!flag1)
 					flag1 = true;
 				else if (!flag2)
 					flag2 = true;
-				else
-					flag3 = true;
 			}
 		} else {
 			for (aniY = 4 + move.fromRow * 20; aniY > 4 + move.toRow * 20; aniY--) {
@@ -560,13 +477,10 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 						aniX++;
 					flag1 = false;
 					flag2 = false;
-					flag3 = false;
 				} else if (!flag1)
 					flag1 = true;
 				else if (!flag2)
 					flag2 = true;
-				else
-					flag3 = true;
 			}
 		}
 		aniMove = null;
@@ -582,14 +496,12 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 			if (legalMoves != null) {
 				if (currentPlayer == CheckersData.RED) {
 					// message.setText("RED: You must continue jumping.");
-					if(checkAGAG.getState())
-						gapRed[GAIndex].play(legalMoves, this, board.getBoard());
-					else if(checkMMAG.getState() || checkMMH.getState())
+					if(checkMMAG.getState() || checkMMH.getState())
 						mmp.play(legalMoves, this, board.getBoard());
 				} else {
 					// message.setText("BLACK: You must continue jumping.");
 					// gap.play(legalMoves, this);
-					if(checkAGAG.getState() || checkAGH.getState() || checkMMAG.getState())
+					if(checkAGH.getState() || checkMMAG.getState())
 						gapBlack[GAIndex].play(legalMoves, this, board.getBoard());
 					else if(checkMMH.getState())
 						mmp.play(legalMoves, this, board.getBoard());
@@ -628,7 +540,7 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 
 			// gap.play(legalMoves, this)
 			if (fl)
-				if(checkAGAG.getState() || checkMMAG.getState() || checkAGH.getState())
+				if(checkMMAG.getState() || checkAGH.getState())
 					gapBlack[GAIndex].play(legalMoves, this, board.getBoard());
 				//else if(checkMMH.getState())
 					//mmp.play(legalMoves, this, board.getBoard());
@@ -652,9 +564,7 @@ public class CheckersCanvas extends Canvas implements ActionListener, MouseListe
 			 */
 
 			if (fl)
-				if(checkAGAG.getState())
-					gapRed[GAIndex].play(legalMoves, this, board.getBoard());
-				else if(checkMMAG.getState() || checkMMH.getState())
+				if(checkMMAG.getState() || checkMMH.getState())
 					mmp.play(legalMoves, this, board.getBoard());
 		}
 

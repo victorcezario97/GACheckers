@@ -34,7 +34,6 @@ public class Checkers extends Applet{
     
     board.check.setVisible(true);
     add(board.check);
-    add(board.checkAGAG);
     add(board.checkAGH);
     add(board.checkMMAG);
     add(board.checkMMH);
@@ -51,9 +50,8 @@ public class Checkers extends Applet{
     board.resignButton.setBounds(210, 55, 100, 30);
     board.message.setBounds(0, 200, 330, 30);
     board.check.setBounds(50, 220, 200, 30);
-    board.checkAGAG.setBounds(210, 90, 130, 30);
+    board.checkMMH.setBounds(210, 90, 130, 30);
     board.checkAGH.setBounds(210, 120, 130, 30);
     board.checkMMAG.setBounds(210, 150, 130, 30);
-    board.checkMMH.setBounds(210, 180, 130, 30);
  }
 }

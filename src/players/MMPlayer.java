@@ -7,6 +7,9 @@ import utils.Pair;
 
 public class MMPlayer {
 	
+	private static final int INFMIN = -10000000, INFMAX = 10000000;
+	
+	
 	public void play(CheckersMove[] moves, CheckersCanvas canvas, int[][] board){
 		
 		Pair p = findPlay(moves, board, CheckersData.RED, 0);
@@ -33,8 +36,8 @@ public class MMPlayer {
 		if(player == CheckersData.BLACK) newPlayer = CheckersData.RED;
 		else newPlayer = CheckersData.BLACK;
 
-		if(player == CheckersData.RED) p = new Pair(-1, -50);
-		else p = new Pair(-1, 50);
+		if(player == CheckersData.RED) p = new Pair(-1, INFMIN);
+		else p = new Pair(-1, INFMAX);
 		
 		for(CheckersMove move : moves) {			
 			
